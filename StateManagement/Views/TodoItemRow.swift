@@ -10,13 +10,10 @@ import SwiftUI
 struct TodoItemRow: View {
     @Binding var todoItem : TodoItem
     var body: some View {
-        HStack {
-            Button(action: {
-                todoItem.isDone.toggle()
-            }) {
-                TodoToggleButton(state: $todoItem.isDone)
-            }
-            .frame(width: 20)
+        HStack(alignment: .top) {
+            TodoToggleButton(state: $todoItem.isDone)
+                .frame(width: 25)
+            
             VStack(alignment: .leading) {
                 Text(todoItem.title)
                     .font(.headline)
@@ -27,9 +24,10 @@ struct TodoItemRow: View {
                         .strikethrough(todoItem.isDone)
                 }
             }
+            .padding(.leading, 5)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading)
+        .padding(.leading, 10)
     }
 }
 

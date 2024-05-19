@@ -16,18 +16,19 @@ struct TodoToggleButton: View {
             }
 
         } label: {
-            ZStack {
-                Circle()
-                    .stroke(lineWidth: 2.0)
-                    .foregroundStyle(.blue)
-                if state {
+            GeometryReader { reader in
+                ZStack {
                     Circle()
+                        .stroke(lineWidth: 2.0)
                         .foregroundStyle(.blue)
+                    if state {
+                        Circle()
+                            .frame(width: state ? reader.size.width * 0.8 : reader.size.width )
+                            .foregroundStyle(.blue)
+                    }
                 }
             }
-                
-            
-            
+            .scaledToFit()
         }
 
     }

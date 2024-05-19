@@ -8,19 +8,32 @@
 import SwiftUI
 
 struct TodoItemsList: View {
-    @State var todoItems : [TodoItem] = (.loadFromJson("todoItems") ?? [])
-    {
-        didSet {
-            let finished = todoItems.filter{ $0.isDone == true}
-            let d = todoItems.drop(while: {$0.isDone == true})
-            todoItems = d + finished
-        }
-    }
+    @StateObject var viewModel = TodoItemsListViewModel()
     var body: some View {
-        List($todoItems) { item in
-            TodoItemRow(todoItem: item)
+        
+        NavigationView {
+            List {
+                ForEach($viewModel.todoItems) { item in
+                    TodoItemRow(todoItem: item.onNewValue {
+                        viewModel.reorder()
+                    })
+                }
+                .onDelete(perform: viewModel.onDelete(_:))
+                .onMove(perform: { indices, newOffset in
+                    viewModel.onMove(from: indices, to: newOffset)
+                })
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Todo Items")
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                }
+            })
+            .onAppear{
+                viewModel.loadItems()
+            }
         }
-        .padding()
     }
 }
 
