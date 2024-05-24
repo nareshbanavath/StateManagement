@@ -11,12 +11,22 @@ struct TodoItemsList: View {
     @StateObject var viewModel = TodoItemsListViewModel()
     var body: some View {
         
-        NavigationView {
+        NavigationStack {
             List {
-                ForEach($viewModel.todoItems) { item in
-                    TodoItemRow(todoItem: item.onNewValue {
-                        viewModel.reorder()
-                    })
+                ForEach($viewModel.todoItems) { $item in
+                    
+                    NavigationLink(value: item) {
+                        TodoItemRow(todoItem: $item.onNewValue {
+                            viewModel.reorder()
+                        })
+                    }
+                    
+//                    NavigationLink(destination: TodoItemDetailView(todoItem: item)) {
+//                        TodoItemRow(todoItem: item.onNewValue {
+//                            viewModel.reorder()
+//                        })
+//                    }
+
                 }
                 .onDelete(perform: viewModel.onDelete(_:))
                 .onMove(perform: { indices, newOffset in
@@ -25,6 +35,19 @@ struct TodoItemsList: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Todo Items")
+            .navigationDestination(for: TodoItem.self, destination: { item in
+                let todoItemBinding = Binding(
+                    get: {
+                        viewModel.todoItems.first(where: {$0.id == item.id})!
+                    },
+                    set: { newItem in
+                        let index = viewModel.todoItems.firstIndex(where: {$0.id == item.id})!
+                        viewModel.todoItems[index] = newItem
+                    }
+                
+                )
+                TodoItemDetailView(todoItem: todoItemBinding)
+            })
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()

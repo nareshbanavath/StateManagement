@@ -10,13 +10,13 @@ class TodoItemsListViewModel : ObservableObject {
     @Published var todoItems : [TodoItem] = []
     
     func loadItems(){
-            todoItems =  .loadFromJson("todoItems") ?? []
+        todoItems =  .loadFromJson("todoItems") ?? []
     }
     
     func reorder() {
         
-            todoItems.sort(by: {  !$0.isDone && $1.isDone  })
-       
+        todoItems.sort(by: {  !$0.isDone && $1.isDone  })
+        
     }
     
     func onDelete(_ index : IndexSet) {
